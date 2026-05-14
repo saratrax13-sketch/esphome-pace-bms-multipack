@@ -13,8 +13,9 @@ It supports per-pack monitoring, automatic valid cell-count detection, combined 
 - ESP32 + RS485 monitoring
 - PACE RS485/Modbus support
 - Multi-pack design
-- Pack 1 / Master and Pack 2 / Slave 1 support in the base v2 file
-- Clear comments for future Pack 3 / Slave 2 and Pack 4 / Slave 3 expansion
+- Pack 1 / Master and Pack 2 / Slave 1 active in the base v2 file
+- Full Pack 3 / Slave 2 and Pack 4 / Slave 3 code blocks included but commented out by default
+- Users can uncomment Pack 3 / Pack 4 sections when extra physical batteries are added
 - Automatic valid cell-count detection
 - Supports 13S and 16S-style PACE BMS layouts
 - Per-pack cell voltage monitoring
@@ -41,6 +42,28 @@ Suggested GitHub description:
 ```text
 ESPHome monitor for multi-pack PACE RS485/Modbus lithium batteries with auto cell-count detection and Home Assistant/MQTT integration.
 ```
+
+---
+
+## Main YAML File
+
+Recommended YAML file name:
+
+```text
+pace-bms-multipack-v2-with-commented-extra-packs.yaml
+```
+
+This file contains:
+
+```text
+Pack 1 / Master active code
+Pack 2 / Slave 1 active code
+Pack 3 / Slave 2 full code, commented out
+Pack 4 / Slave 3 full code, commented out
+Combined calculation guidance
+Runtime and charging-time sensors in minutes
+```
+
 
 ---
 
@@ -156,16 +179,13 @@ Each battery pack must have a unique Modbus address.
 The base v2 file uses this address map:
 
 ```text
-Pack 1 / Master   = 0x01
-Pack 2 / Slave 1  = 0x02
+Pack 1 / Master   = 0x01  active by default
+Pack 2 / Slave 1  = 0x02  active by default
+Pack 3 / Slave 2  = 0x03  included but commented out
+Pack 4 / Slave 3  = 0x04  included but commented out
 ```
 
-Suggested future expansion convention:
-
-```text
-Pack 3 / Slave 2  = 0x03
-Pack 4 / Slave 3  = 0x04
-```
+The Pack 3 and Pack 4 code blocks are already included in the YAML file, but they are commented out with `#` so they do not run until the user intentionally enables them.
 
 Example ESPHome Modbus controller section:
 
@@ -189,20 +209,78 @@ modbus_controller:
     update_interval: 45s
     offline_skip_updates: 5
 
-  # Future expansion:
-  #
-  # Pack 3 / Slave 2
+  # Pack 3 / Slave 2 - included in the full YAML but commented out
   # - id: bms_pack_3
   #   address: 0x03
   #   modbus_id: modbus0
+  #   setup_priority: -10
+  #   command_throttle: 300ms
+  #   update_interval: 35s
+  #   offline_skip_updates: 3
   #
-  # Pack 4 / Slave 3
+  # Pack 4 / Slave 3 - included in the full YAML but commented out
   # - id: bms_pack_4
   #   address: 0x04
   #   modbus_id: modbus0
+  #   setup_priority: -10
+  #   command_throttle: 400ms
+  #   update_interval: 45s
+  #   offline_skip_updates: 3
 ```
 
 > Important: The YAML can only monitor packs that are explicitly defined. ESPHome cannot dynamically create new sensors at runtime.
+
+---
+
+## Enabling Pack 3 and Pack 4
+
+The v2 YAML includes full Pack 3 and Pack 4 code blocks, but they are commented out by default.
+
+This makes the file easier to expand later without needing to rewrite the configuration.
+
+Before enabling an extra pack, confirm:
+
+```text
+The physical battery is installed
+The battery is connected to the same RS485 daisy-chain bus
+The battery has a unique Modbus address
+The address matches the YAML section being enabled
+Only one ESP32 is polling the RS485 bus
+```
+
+Default expansion convention:
+
+```text
+Pack 3 / Slave 2 = Modbus address 0x03
+Pack 4 / Slave 3 = Modbus address 0x04
+```
+
+To enable Pack 3:
+
+```text
+1. Search the YAML for "OPTIONAL PACK 3".
+2. Remove the leading "# " from the Pack 3 Modbus controller block.
+3. Remove the leading "# " from the Pack 3 binary sensor block.
+4. Remove the leading "# " from the Pack 3 numeric sensor block.
+5. Remove the leading "# " from the Pack 3 projected time sensor block.
+6. Remove the leading "# " from the Pack 3 text sensor / decoder block.
+7. Update the combined calculation lambdas to include Pack 3.
+```
+
+To enable Pack 4:
+
+```text
+1. Search the YAML for "OPTIONAL PACK 4".
+2. Remove the leading "# " from the Pack 4 Modbus controller block.
+3. Remove the leading "# " from the Pack 4 binary sensor block.
+4. Remove the leading "# " from the Pack 4 numeric sensor block.
+5. Remove the leading "# " from the Pack 4 projected time sensor block.
+6. Remove the leading "# " from the Pack 4 text sensor / decoder block.
+7. Update the combined calculation lambdas to include Pack 4.
+```
+
+> Important: Uncommenting the Pack 3 or Pack 4 sensor blocks alone is not enough. The combined battery-bank calculations must also be updated so that totals, averages, minimums, maximums, runtime, and charging-time estimates include the newly enabled packs.
+
 
 ---
 
@@ -306,6 +384,54 @@ For batteries connected in parallel, combined values are calculated as follows:
 
 > Do not add pack voltages together when packs are connected in parallel.
 
+### Updating Combined Calculations for Extra Packs
+
+The base v2 file actively calculates combined values for:
+
+```text
+Pack 1 + Pack 2
+```
+
+If Pack 3 and/or Pack 4 are enabled, the combined calculation lambdas must be updated.
+
+Example current calculation for two packs:
+
+```cpp
+return id(pack_1_current).state + id(pack_2_current).state;
+```
+
+Example for three packs:
+
+```cpp
+return id(pack_1_current).state + id(pack_2_current).state + id(pack_3_current).state;
+```
+
+Example for four packs:
+
+```cpp
+return id(pack_1_current).state + id(pack_2_current).state + id(pack_3_current).state + id(pack_4_current).state;
+```
+
+For voltage, do not add pack voltages. Average valid pack voltages instead.
+
+For capacity, current, and power, add all enabled packs.
+
+For cell health, use:
+
+```text
+Lowest cell voltage = lowest valid cell across all enabled packs
+Highest cell voltage = highest valid cell across all enabled packs
+Worst delta = highest pack delta across all enabled packs
+Detected cells = sum of detected valid cells from all enabled packs
+```
+
+For data trust, keep this rule:
+
+```text
+If an enabled pack is unavailable, the combined value should become unavailable instead of showing a partial total.
+```
+
+
 ---
 
 ## Projected Runtime and Charging Time
@@ -395,14 +521,15 @@ sensor.pace_bms_multipack_combined_projected_charging_time
 
 ## Troubleshooting
 
-### Pack 1 reads, but Pack 2 does not
+### Pack 1 reads, but Pack 2 / Pack 3 / Pack 4 does not
 
 Check:
 
 ```text
-Pack 2 is connected to the same RS485 bus
-Pack 2 has a unique Modbus address
-Pack 2 address matches the YAML address
+The affected pack is connected to the same RS485 bus
+The affected pack has a unique Modbus address
+The affected pack address matches the YAML address
+The affected pack code block is uncommented if it is Pack 3 or Pack 4
 RS485 A/B wiring is correct
 Only one ESP32 is polling the bus
 ```
