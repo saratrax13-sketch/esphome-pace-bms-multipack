@@ -735,232 +735,30 @@ sensor.pace_bms_multipack_combined_projected_charging_time
 
 ---
 
+
 ---
 
 ## Home Assistant `configuration.yaml` Templates
 
-Some users may want extra Home Assistant template sensors in `configuration.yaml` to create cleaner dashboard entities, combine values, or enforce stricter availability rules.
+No Home Assistant `configuration.yaml` template sensors are required for the PACE BMS Multipack project.
 
-The same principle used in the ESPHome YAML should also be followed in Home Assistant:
-
-```text
-Valid source data = show calculated value
-Invalid / unavailable source data = calculated sensor becomes unavailable
-Do not silently replace unavailable values with 0
-```
-
-Avoid this pattern for important live values:
-
-```jinja
-{{ states('sensor.example') | float(0) }}
-```
-
-Using `float(0)` can hide failures because `unknown` or `unavailable` becomes `0`, and the dashboard may continue to show a calculated value that is not trustworthy.
-
-Prefer using an `availability:` template:
-
-```yaml
-availability: >
-  {{
-    states('sensor.example') | is_number
-  }}
-state: >
-  {{
-    states('sensor.example') | float
-  }}
-```
-
-This ensures the template sensor becomes unavailable when its source data is unavailable.
-
----
-
-### Example: Safe Home Assistant Template Sensors
-
-The following example shows the recommended pattern for Home Assistant template sensors.
-
-```yaml
-template:
-  - sensor:
-      - name: "Sunsynk Total PV Power"
-        unique_id: sunsynk_total_pv_power
-        unit_of_measurement: "W"
-        device_class: power
-        state_class: measurement
-        availability: >
-          {{
-            states('sensor.sunsynk_inverter_pv1_power') | is_number and
-            states('sensor.sunsynk_inverter_pv2_power') | is_number
-          }}
-        state: >
-          {{
-            (
-              states('sensor.sunsynk_inverter_pv1_power') | float +
-              states('sensor.sunsynk_inverter_pv2_power') | float
-            ) | round(0)
-          }}
-
-      - name: "Sunsynk UPS Essential Final"
-        unique_id: sunsynk_ups_essential_final
-        unit_of_measurement: "W"
-        device_class: power
-        state_class: measurement
-        availability: >
-          {{
-            states('sensor.sunsynk_inverter_ups_essential_power') | is_number
-          }}
-        state: >
-          {{
-            states('sensor.sunsynk_inverter_ups_essential_power') | float | abs | round(0)
-          }}
-
-      - name: "Sunsynk Non Essential Final"
-        unique_id: sunsynk_non_essential_final
-        unit_of_measurement: "W"
-        device_class: power
-        state_class: measurement
-        availability: >
-          {{
-            states('sensor.sunsynk_inverter_load_power') | is_number and
-            states('sensor.sunsynk_inverter_ups_essential_power') | is_number
-          }}
-        state: >
-          {% set total = states('sensor.sunsynk_inverter_load_power') | float | abs %}
-          {% set essential = states('sensor.sunsynk_inverter_ups_essential_power') | float | abs %}
-          {{ [total - essential, 0] | max | round(0) }}
-
-      - name: "Sunsynk Home Power Final"
-        unique_id: sunsynk_home_power_final
-        unit_of_measurement: "W"
-        device_class: power
-        state_class: measurement
-        availability: >
-          {{
-            states('sensor.sunsynk_inverter_load_power') | is_number
-          }}
-        state: >
-          {{
-            states('sensor.sunsynk_inverter_load_power') | float | abs | round(0)
-          }}
-
-      - name: "Sunsynk Overall State Text"
-        unique_id: sunsynk_overall_state_text
-        availability: >
-          {{
-            states('sensor.sunsynk_inverter_overall_state') not in
-            ['unknown', 'unavailable', 'none', '']
-          }}
-        state: >
-          {% set raw = states('sensor.sunsynk_inverter_overall_state') %}
-          {% set code = raw | int(base=16, default=-1) %}
-          {{ {
-            0: 'Standby',
-            1: 'Self-test',
-            2: 'Normal',
-            3: 'Alarm',
-            4: 'Fault'
-          }.get(code, 'Unknown (' ~ code ~ ')') }}
-
-  - binary_sensor:
-      - name: "Sunsynk Inverter Grid Connected"
-        unique_id: sunsynk_inverter_grid_connected
-        device_class: connectivity
-        delay_off:
-          seconds: 30
-        availability: >
-          {{
-            states('sensor.sunsynk_inverter_grid_voltage') | is_number
-          }}
-        state: >
-          {{
-            states('sensor.sunsynk_inverter_grid_voltage') | float > 100
-          }}
-```
-
----
-
-### Why `availability:` Matters
-
-For live operational dashboards, it is safer to show `unavailable` than to show an incorrect calculated value.
-
-Example problem:
-
-```yaml
-state: >
-  {{
-    states('sensor.source_sensor') | float(0)
-  }}
-```
-
-If `sensor.source_sensor` fails, the template will use `0`.
-
-This can make the dashboard look like the device is reporting a real zero value, when the real issue is that data is missing.
-
-Recommended approach:
-
-```yaml
-availability: >
-  {{
-    states('sensor.source_sensor') | is_number
-  }}
-state: >
-  {{
-    states('sensor.source_sensor') | float
-  }}
-```
-
-This way:
+The ESPHome YAML creates the required entities directly, including:
 
 ```text
-Source sensor valid = calculated sensor shows value
-Source sensor unavailable = calculated sensor unavailable
+Per-pack voltage, current, power, SOC and SOH
+Per-pack remaining, full and design capacity
+Per-pack cell voltages and balancing states
+Per-pack warnings, protections, faults and status
+Combined battery-bank totals
+Combined cell-health values
+Projected runtime
+Projected charging time
 ```
 
----
+Users may create their own optional Home Assistant templates if they want custom dashboard summaries, but they are not required for the standard setup.
 
-### Restart / Reload After Editing Templates
+> Important: Do not copy unrelated inverter templates, such as Sunsynk PV/load/grid templates, into this project documentation. They are separate from the PACE BMS Multipack monitor and may confuse users.
 
-After editing `configuration.yaml`, either:
-
-```text
-Developer Tools > YAML > Check Configuration
-Developer Tools > YAML > Reload Template Entities
-```
-
-or restart Home Assistant if required.
-
-Always check the new entities under:
-
-```text
-Developer Tools > States
-```
-
-Search for the entity name or unique ID and confirm:
-
-```text
-The state is correct
-The unit of measurement is correct
-The sensor becomes unavailable when its source is unavailable
-```
-
----
-
-### Template Sensor Design Rule
-
-For this project, use this rule consistently:
-
-```text
-Never hide unavailable data by converting it to 0.
-Only calculate when all required source sensors are valid.
-Let failures become visible on the dashboard.
-```
-
-This matches the ESPHome timeout philosophy used in the PACE BMS multipack monitor:
-
-```text
-Fresh valid data = show value
-Invalid data = reject value
-No fresh data within timeout = unavailable
-```
 
 ## Troubleshooting
 
