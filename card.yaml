@@ -1,0 +1,677 @@
+type: vertical-stack
+cards:
+  - type: heading
+    heading: PACE BMS Multipack
+    heading_style: title
+
+  # ============================================================
+  # COMBINED BATTERY OVERVIEW
+  # ============================================================
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: tile
+        entity: sensor.pace_bms_multipack_combined_state_of_charge
+        name: Combined SOC
+      - type: tile
+        entity: sensor.pace_bms_multipack_combined_state_of_health
+        name: Combined SOH
+      - type: tile
+        entity: sensor.pace_bms_multipack_combined_average_pack_voltage
+        name: Pack Voltage
+      - type: tile
+        entity: sensor.pace_bms_multipack_combined_total_current
+        name: Total Current
+      - type: tile
+        entity: sensor.pace_bms_multipack_combined_total_power
+        name: Total Power
+      - type: tile
+        entity: sensor.pace_bms_multipack_combined_total_remaining_capacity
+        name: Remaining Capacity
+      - type: tile
+        entity: sensor.pace_bms_multipack_combined_total_full_capacity
+        name: Full Capacity
+      - type: tile
+        entity: sensor.pace_bms_multipack_combined_total_design_capacity
+        name: Design Capacity
+      - type: tile
+        entity: sensor.pace_bms_multipack_combined_total_detected_cell_count
+        name: Total Detected Cells
+      - type: tile
+        entity: sensor.pace_bms_multipack_combined_worst_delta_cell_voltage
+        name: Worst Cell Delta
+      - type: tile
+        entity: sensor.pace_bms_multipack_combined_projected_runtime
+        name: Projected Runtime
+      - type: tile
+        entity: sensor.pace_bms_multipack_combined_projected_charging_time
+        name: Charging Time to Full
+
+  # ============================================================
+  # PROJECTED RUNTIME / CHARGE TIME
+  # ============================================================
+  - type: entities
+    title: Projected Runtime / Charging Time
+    show_header_toggle: false
+    entities:
+      - entity: sensor.pace_bms_multipack_combined_projected_runtime
+        name: Combined Runtime Remaining
+      - entity: sensor.pace_bms_multipack_combined_projected_charging_time
+        name: Combined Charging Time to Full
+      - entity: sensor.pace_bms_multipack_pack_1_projected_runtime
+        name: Pack 1 Runtime Remaining
+      - entity: sensor.pace_bms_multipack_pack_1_projected_charging_time
+        name: Pack 1 Charging Time to Full
+      - entity: sensor.pace_bms_multipack_pack_2_projected_runtime
+        name: Pack 2 Runtime Remaining
+      - entity: sensor.pace_bms_multipack_pack_2_projected_charging_time
+        name: Pack 2 Charging Time to Full
+
+      # OPTIONAL PACK 3 - uncomment when Pack 3 is enabled in ESPHome
+      # - entity: sensor.pace_bms_multipack_pack_3_projected_runtime
+      #   name: Pack 3 Runtime Remaining
+      # - entity: sensor.pace_bms_multipack_pack_3_projected_charging_time
+      #   name: Pack 3 Charging Time to Full
+
+      # OPTIONAL PACK 4 - uncomment when Pack 4 is enabled in ESPHome
+      # - entity: sensor.pace_bms_multipack_pack_4_projected_runtime
+      #   name: Pack 4 Runtime Remaining
+      # - entity: sensor.pace_bms_multipack_pack_4_projected_charging_time
+      #   name: Pack 4 Charging Time to Full
+
+  # ============================================================
+  # COMBINED CELL HEALTH
+  # ============================================================
+  - type: entities
+    title: Combined Cell Health
+    show_header_toggle: false
+    entities:
+      - entity: sensor.pace_bms_multipack_combined_average_cell_voltage
+        name: Average Cell Voltage
+      - entity: sensor.pace_bms_multipack_combined_lowest_cell_voltage
+        name: Lowest Cell Voltage
+      - entity: sensor.pace_bms_multipack_combined_highest_cell_voltage
+        name: Highest Cell Voltage
+      - entity: sensor.pace_bms_multipack_combined_worst_delta_cell_voltage
+        name: Worst Delta Cell Voltage
+      - entity: sensor.pace_bms_multipack_combined_total_detected_cell_count
+        name: Total Detected Cells
+
+  # ============================================================
+  # PACK 1 + PACK 2 SUMMARY
+  # ============================================================
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: entities
+        title: Pack 1 / Master Summary
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pace_bms_multipack_pack_1_state_of_charge
+            name: SOC
+          - entity: sensor.pace_bms_multipack_pack_1_state_of_health
+            name: SOH
+          - entity: sensor.pace_bms_multipack_pack_1_total_voltage
+            name: Voltage
+          - entity: sensor.pace_bms_multipack_pack_1_current
+            name: Current
+          - entity: sensor.pace_bms_multipack_pack_1_power
+            name: Power
+          - entity: sensor.pace_bms_multipack_pack_1_remaining_capacity
+            name: Remaining Capacity
+          - entity: sensor.pace_bms_multipack_pack_1_full_capacity
+            name: Full Capacity
+          - entity: sensor.pace_bms_multipack_pack_1_design_capacity
+            name: Design Capacity
+          - entity: sensor.pace_bms_multipack_pack_1_charging_cycles
+            name: Charging Cycles
+          - entity: sensor.pace_bms_multipack_pack_1_detected_cell_count
+            name: Detected Cells
+          - entity: sensor.pace_bms_multipack_pack_1_delta_cell_voltage
+            name: Delta Cell Voltage
+          - entity: sensor.pace_bms_multipack_pack_1_projected_runtime
+            name: Projected Runtime
+          - entity: sensor.pace_bms_multipack_pack_1_projected_charging_time
+            name: Charging Time to Full
+
+      - type: entities
+        title: Pack 2 / Slave 1 Summary
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pace_bms_multipack_pack_2_state_of_charge
+            name: SOC
+          - entity: sensor.pace_bms_multipack_pack_2_state_of_health
+            name: SOH
+          - entity: sensor.pace_bms_multipack_pack_2_total_voltage
+            name: Voltage
+          - entity: sensor.pace_bms_multipack_pack_2_current
+            name: Current
+          - entity: sensor.pace_bms_multipack_pack_2_power
+            name: Power
+          - entity: sensor.pace_bms_multipack_pack_2_remaining_capacity
+            name: Remaining Capacity
+          - entity: sensor.pace_bms_multipack_pack_2_full_capacity
+            name: Full Capacity
+          - entity: sensor.pace_bms_multipack_pack_2_design_capacity
+            name: Design Capacity
+          - entity: sensor.pace_bms_multipack_pack_2_charging_cycles
+            name: Charging Cycles
+          - entity: sensor.pace_bms_multipack_pack_2_detected_cell_count
+            name: Detected Cells
+          - entity: sensor.pace_bms_multipack_pack_2_delta_cell_voltage
+            name: Delta Cell Voltage
+          - entity: sensor.pace_bms_multipack_pack_2_projected_runtime
+            name: Projected Runtime
+          - entity: sensor.pace_bms_multipack_pack_2_projected_charging_time
+            name: Charging Time to Full
+
+  # ============================================================
+  # OPTIONAL PACK 3 + PACK 4 SUMMARY
+  # Uncomment this full grid after enabling Pack 3/4 in ESPHome.
+  # ============================================================
+  # - type: grid
+  #   columns: 2
+  #   square: false
+  #   cards:
+  #     - type: entities
+  #       title: Pack 3 / Slave 2 Summary
+  #       show_header_toggle: false
+  #       entities:
+  #         - entity: sensor.pace_bms_multipack_pack_3_state_of_charge
+  #           name: SOC
+  #         - entity: sensor.pace_bms_multipack_pack_3_state_of_health
+  #           name: SOH
+  #         - entity: sensor.pace_bms_multipack_pack_3_total_voltage
+  #           name: Voltage
+  #         - entity: sensor.pace_bms_multipack_pack_3_current
+  #           name: Current
+  #         - entity: sensor.pace_bms_multipack_pack_3_power
+  #           name: Power
+  #         - entity: sensor.pace_bms_multipack_pack_3_remaining_capacity
+  #           name: Remaining Capacity
+  #         - entity: sensor.pace_bms_multipack_pack_3_full_capacity
+  #           name: Full Capacity
+  #         - entity: sensor.pace_bms_multipack_pack_3_design_capacity
+  #           name: Design Capacity
+  #         - entity: sensor.pace_bms_multipack_pack_3_charging_cycles
+  #           name: Charging Cycles
+  #         - entity: sensor.pace_bms_multipack_pack_3_detected_cell_count
+  #           name: Detected Cells
+  #         - entity: sensor.pace_bms_multipack_pack_3_delta_cell_voltage
+  #           name: Delta Cell Voltage
+  #         - entity: sensor.pace_bms_multipack_pack_3_projected_runtime
+  #           name: Projected Runtime
+  #         - entity: sensor.pace_bms_multipack_pack_3_projected_charging_time
+  #           name: Charging Time to Full
+  #
+  #     - type: entities
+  #       title: Pack 4 / Slave 3 Summary
+  #       show_header_toggle: false
+  #       entities:
+  #         - entity: sensor.pace_bms_multipack_pack_4_state_of_charge
+  #           name: SOC
+  #         - entity: sensor.pace_bms_multipack_pack_4_state_of_health
+  #           name: SOH
+  #         - entity: sensor.pace_bms_multipack_pack_4_total_voltage
+  #           name: Voltage
+  #         - entity: sensor.pace_bms_multipack_pack_4_current
+  #           name: Current
+  #         - entity: sensor.pace_bms_multipack_pack_4_power
+  #           name: Power
+  #         - entity: sensor.pace_bms_multipack_pack_4_remaining_capacity
+  #           name: Remaining Capacity
+  #         - entity: sensor.pace_bms_multipack_pack_4_full_capacity
+  #           name: Full Capacity
+  #         - entity: sensor.pace_bms_multipack_pack_4_design_capacity
+  #           name: Design Capacity
+  #         - entity: sensor.pace_bms_multipack_pack_4_charging_cycles
+  #           name: Charging Cycles
+  #         - entity: sensor.pace_bms_multipack_pack_4_detected_cell_count
+  #           name: Detected Cells
+  #         - entity: sensor.pace_bms_multipack_pack_4_delta_cell_voltage
+  #           name: Delta Cell Voltage
+  #         - entity: sensor.pace_bms_multipack_pack_4_projected_runtime
+  #           name: Projected Runtime
+  #         - entity: sensor.pace_bms_multipack_pack_4_projected_charging_time
+  #           name: Charging Time to Full
+
+  # ============================================================
+  # PACK 1 + PACK 2 CELL HEALTH
+  # ============================================================
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: entities
+        title: Pack 1 Cell Health
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pace_bms_multipack_pack_1_average_cell_voltage
+            name: Average Cell Voltage
+          - entity: sensor.pace_bms_multipack_pack_1_min_cell_voltage
+            name: Minimum Cell Voltage
+          - entity: sensor.pace_bms_multipack_pack_1_min_voltage_cell
+            name: Minimum Voltage Cell
+          - entity: sensor.pace_bms_multipack_pack_1_max_cell_voltage
+            name: Maximum Cell Voltage
+          - entity: sensor.pace_bms_multipack_pack_1_max_voltage_cell
+            name: Maximum Voltage Cell
+          - entity: sensor.pace_bms_multipack_pack_1_balancer_status
+            name: Balancer Bitmask
+
+      - type: entities
+        title: Pack 2 Cell Health
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pace_bms_multipack_pack_2_average_cell_voltage
+            name: Average Cell Voltage
+          - entity: sensor.pace_bms_multipack_pack_2_min_cell_voltage
+            name: Minimum Cell Voltage
+          - entity: sensor.pace_bms_multipack_pack_2_min_voltage_cell
+            name: Minimum Voltage Cell
+          - entity: sensor.pace_bms_multipack_pack_2_max_cell_voltage
+            name: Maximum Cell Voltage
+          - entity: sensor.pace_bms_multipack_pack_2_max_voltage_cell
+            name: Maximum Voltage Cell
+          - entity: sensor.pace_bms_multipack_pack_2_balancer_status
+            name: Balancer Bitmask
+
+  # ============================================================
+  # PACK 1 + PACK 2 TEMPERATURES
+  # ============================================================
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: entities
+        title: Pack 1 Temperatures
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pace_bms_multipack_pack_1_battery_temperature_1
+            name: Battery Temp 1
+          - entity: sensor.pace_bms_multipack_pack_1_battery_temperature_2
+            name: Battery Temp 2
+          - entity: sensor.pace_bms_multipack_pack_1_battery_temperature_3
+            name: Battery Temp 3
+          - entity: sensor.pace_bms_multipack_pack_1_battery_temperature_4
+            name: Battery Temp 4
+          - entity: sensor.pace_bms_multipack_pack_1_mosfet_temperature
+            name: MOSFET Temp
+          - entity: sensor.pace_bms_multipack_pack_1_environment_temperature
+            name: Environment Temp
+
+      - type: entities
+        title: Pack 2 Temperatures
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pace_bms_multipack_pack_2_battery_temperature_1
+            name: Battery Temp 1
+          - entity: sensor.pace_bms_multipack_pack_2_battery_temperature_2
+            name: Battery Temp 2
+          - entity: sensor.pace_bms_multipack_pack_2_battery_temperature_3
+            name: Battery Temp 3
+          - entity: sensor.pace_bms_multipack_pack_2_battery_temperature_4
+            name: Battery Temp 4
+          - entity: sensor.pace_bms_multipack_pack_2_mosfet_temperature
+            name: MOSFET Temp
+          - entity: sensor.pace_bms_multipack_pack_2_environment_temperature
+            name: Environment Temp
+
+  # ============================================================
+  # PACK 1 + PACK 2 BMS STATUS
+  # ============================================================
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: entities
+        title: Pack 1 BMS Status
+        show_header_toggle: false
+        entities:
+          - entity: binary_sensor.pace_bms_multipack_pack_1_charging_operation
+            name: Charging Operation
+          - entity: binary_sensor.pace_bms_multipack_pack_1_discharging_operation
+            name: Discharging Operation
+          - entity: binary_sensor.pace_bms_multipack_pack_1_charging
+            name: Charging Enabled
+          - entity: binary_sensor.pace_bms_multipack_pack_1_discharging
+            name: Discharging Enabled
+          - entity: sensor.pace_bms_multipack_pack_1_status
+            name: Status
+          - entity: sensor.pace_bms_multipack_pack_1_warnings
+            name: Warnings
+          - entity: sensor.pace_bms_multipack_pack_1_protections
+            name: Protections
+          - entity: sensor.pace_bms_multipack_pack_1_faults
+            name: Faults
+          - entity: sensor.pace_bms_multipack_pack_1_warnings_bitmask
+            name: Warnings Bitmask
+          - entity: sensor.pace_bms_multipack_pack_1_protections_bitmask
+            name: Protections Bitmask
+          - entity: sensor.pace_bms_multipack_pack_1_fault_status_bitmask
+            name: Fault Status Bitmask
+
+      - type: entities
+        title: Pack 2 BMS Status
+        show_header_toggle: false
+        entities:
+          - entity: binary_sensor.pace_bms_multipack_pack_2_charging_operation
+            name: Charging Operation
+          - entity: binary_sensor.pace_bms_multipack_pack_2_discharging_operation
+            name: Discharging Operation
+          - entity: binary_sensor.pace_bms_multipack_pack_2_charging
+            name: Charging Enabled
+          - entity: binary_sensor.pace_bms_multipack_pack_2_discharging
+            name: Discharging Enabled
+          - entity: sensor.pace_bms_multipack_pack_2_status
+            name: Status
+          - entity: sensor.pace_bms_multipack_pack_2_warnings
+            name: Warnings
+          - entity: sensor.pace_bms_multipack_pack_2_protections
+            name: Protections
+          - entity: sensor.pace_bms_multipack_pack_2_faults
+            name: Faults
+          - entity: sensor.pace_bms_multipack_pack_2_warnings_bitmask
+            name: Warnings Bitmask
+          - entity: sensor.pace_bms_multipack_pack_2_protections_bitmask
+            name: Protections Bitmask
+          - entity: sensor.pace_bms_multipack_pack_2_fault_status_bitmask
+            name: Fault Status Bitmask
+
+  # ============================================================
+  # PACK 1 + PACK 2 CELL VOLTAGES
+  # This display shows 13 cells because Hubble AM2/P13S packs are 13S.
+  # For 16S packs, uncomment cells 14-16 where required.
+  # ============================================================
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: entities
+        title: Pack 1 Cell Voltages
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_1
+            name: Cell 1
+          - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_2
+            name: Cell 2
+          - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_3
+            name: Cell 3
+          - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_4
+            name: Cell 4
+          - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_5
+            name: Cell 5
+          - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_6
+            name: Cell 6
+          - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_7
+            name: Cell 7
+          - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_8
+            name: Cell 8
+          - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_9
+            name: Cell 9
+          - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_10
+            name: Cell 10
+          - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_11
+            name: Cell 11
+          - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_12
+            name: Cell 12
+          - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_13
+            name: Cell 13
+          # Optional 16S cells:
+          # - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_14
+          #   name: Cell 14
+          # - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_15
+          #   name: Cell 15
+          # - entity: sensor.pace_bms_multipack_pack_1_cell_voltage_16
+          #   name: Cell 16
+
+      - type: entities
+        title: Pack 2 Cell Voltages
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_1
+            name: Cell 1
+          - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_2
+            name: Cell 2
+          - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_3
+            name: Cell 3
+          - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_4
+            name: Cell 4
+          - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_5
+            name: Cell 5
+          - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_6
+            name: Cell 6
+          - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_7
+            name: Cell 7
+          - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_8
+            name: Cell 8
+          - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_9
+            name: Cell 9
+          - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_10
+            name: Cell 10
+          - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_11
+            name: Cell 11
+          - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_12
+            name: Cell 12
+          - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_13
+            name: Cell 13
+          # Optional 16S cells:
+          # - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_14
+          #   name: Cell 14
+          # - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_15
+          #   name: Cell 15
+          # - entity: sensor.pace_bms_multipack_pack_2_cell_voltage_16
+          #   name: Cell 16
+
+  # ============================================================
+  # PACK 1 + PACK 2 CELL BALANCING
+  # This display shows 13 cells by default.
+  # For 16S packs, uncomment balancing cells 14-16 where required.
+  # ============================================================
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: entities
+        title: Pack 1 Cell Balancing
+        show_header_toggle: false
+        entities:
+          - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_1
+            name: Cell 1
+          - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_2
+            name: Cell 2
+          - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_3
+            name: Cell 3
+          - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_4
+            name: Cell 4
+          - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_5
+            name: Cell 5
+          - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_6
+            name: Cell 6
+          - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_7
+            name: Cell 7
+          - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_8
+            name: Cell 8
+          - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_9
+            name: Cell 9
+          - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_10
+            name: Cell 10
+          - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_11
+            name: Cell 11
+          - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_12
+            name: Cell 12
+          - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_13
+            name: Cell 13
+          # Optional 16S cells:
+          # - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_14
+          #   name: Cell 14
+          # - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_15
+          #   name: Cell 15
+          # - entity: binary_sensor.pace_bms_multipack_pack_1_cell_balancing_16
+          #   name: Cell 16
+
+      - type: entities
+        title: Pack 2 Cell Balancing
+        show_header_toggle: false
+        entities:
+          - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_1
+            name: Cell 1
+          - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_2
+            name: Cell 2
+          - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_3
+            name: Cell 3
+          - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_4
+            name: Cell 4
+          - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_5
+            name: Cell 5
+          - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_6
+            name: Cell 6
+          - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_7
+            name: Cell 7
+          - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_8
+            name: Cell 8
+          - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_9
+            name: Cell 9
+          - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_10
+            name: Cell 10
+          - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_11
+            name: Cell 11
+          - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_12
+            name: Cell 12
+          - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_13
+            name: Cell 13
+          # Optional 16S cells:
+          # - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_14
+          #   name: Cell 14
+          # - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_15
+          #   name: Cell 15
+          # - entity: binary_sensor.pace_bms_multipack_pack_2_cell_balancing_16
+          #   name: Cell 16
+
+  # ============================================================
+  # OPTIONAL PACK 3 + PACK 4 CELL VOLTAGES / BALANCING
+  # Uncomment and duplicate/adapt this section only after enabling Pack 3/4.
+  # ============================================================
+  # - type: grid
+  #   columns: 2
+  #   square: false
+  #   cards:
+  #     - type: entities
+  #       title: Pack 3 Cell Voltages
+  #       show_header_toggle: false
+  #       entities:
+  #         - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_1
+  #           name: Cell 1
+  #         - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_2
+  #           name: Cell 2
+  #         - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_3
+  #           name: Cell 3
+  #         - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_4
+  #           name: Cell 4
+  #         - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_5
+  #           name: Cell 5
+  #         - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_6
+  #           name: Cell 6
+  #         - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_7
+  #           name: Cell 7
+  #         - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_8
+  #           name: Cell 8
+  #         - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_9
+  #           name: Cell 9
+  #         - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_10
+  #           name: Cell 10
+  #         - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_11
+  #           name: Cell 11
+  #         - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_12
+  #           name: Cell 12
+  #         - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_13
+  #           name: Cell 13
+  #         # Optional 16S cells:
+  #         # - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_14
+  #         #   name: Cell 14
+  #         # - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_15
+  #         #   name: Cell 15
+  #         # - entity: sensor.pace_bms_multipack_pack_3_cell_voltage_16
+  #         #   name: Cell 16
+  #
+  #     - type: entities
+  #       title: Pack 4 Cell Voltages
+  #       show_header_toggle: false
+  #       entities:
+  #         - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_1
+  #           name: Cell 1
+  #         - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_2
+  #           name: Cell 2
+  #         - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_3
+  #           name: Cell 3
+  #         - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_4
+  #           name: Cell 4
+  #         - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_5
+  #           name: Cell 5
+  #         - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_6
+  #           name: Cell 6
+  #         - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_7
+  #           name: Cell 7
+  #         - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_8
+  #           name: Cell 8
+  #         - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_9
+  #           name: Cell 9
+  #         - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_10
+  #           name: Cell 10
+  #         - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_11
+  #           name: Cell 11
+  #         - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_12
+  #           name: Cell 12
+  #         - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_13
+  #           name: Cell 13
+  #         # Optional 16S cells:
+  #         # - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_14
+  #         #   name: Cell 14
+  #         # - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_15
+  #         #   name: Cell 15
+  #         # - entity: sensor.pace_bms_multipack_pack_4_cell_voltage_16
+  #         #   name: Cell 16
+
+  # ============================================================
+  # DIAGNOSTICS / IDENTITY
+  # ============================================================
+  - type: entities
+    title: Diagnostics / Identity
+    show_header_toggle: false
+    entities:
+      - entity: sensor.pace_bms_multipack_wifi_signal
+        name: WiFi Signal
+      - entity: sensor.pace_bms_multipack_uptime
+        name: Uptime
+      - entity: sensor.pace_bms_multipack_pack_1_bms_serial_number
+        name: Pack 1 BMS Serial
+      - entity: sensor.pace_bms_multipack_pack_1_battery_pack_serial_number
+        name: Pack 1 Pack Serial
+      - entity: sensor.pace_bms_multipack_pack_1_version_information
+        name: Pack 1 Version
+      - entity: sensor.pace_bms_multipack_pack_2_bms_serial_number
+        name: Pack 2 BMS Serial
+      - entity: sensor.pace_bms_multipack_pack_2_battery_pack_serial_number
+        name: Pack 2 Pack Serial
+      - entity: sensor.pace_bms_multipack_pack_2_version_information
+        name: Pack 2 Version
+
+      # OPTIONAL PACK 3 / PACK 4 identity sensors
+      # - entity: sensor.pace_bms_multipack_pack_3_bms_serial_number
+      #   name: Pack 3 BMS Serial
+      # - entity: sensor.pace_bms_multipack_pack_3_battery_pack_serial_number
+      #   name: Pack 3 Pack Serial
+      # - entity: sensor.pace_bms_multipack_pack_3_version_information
+      #   name: Pack 3 Version
+      # - entity: sensor.pace_bms_multipack_pack_4_bms_serial_number
+      #   name: Pack 4 BMS Serial
+      # - entity: sensor.pace_bms_multipack_pack_4_battery_pack_serial_number
+      #   name: Pack 4 Pack Serial
+      # - entity: sensor.pace_bms_multipack_pack_4_version_information
+      #   name: Pack 4 Version
+
+grid_options:
+  columns: 18
+  rows: auto
