@@ -318,6 +318,222 @@ If your battery has multiple communication ports, make sure the ESP32 RS485 boar
 
 ---
 
+---
+
+## RJ45 RS485 Pinout Documentation
+
+Many PACE-based lithium batteries expose RS485 communication through an RJ45-style port. This project can work with RJ45 battery communication ports, but the exact pinout must always be confirmed against the battery manufacturer's documentation.
+
+> Important: RJ45 does not automatically mean Ethernet. On battery BMS systems, an RJ45 socket is often only used as a convenient connector for RS485, CAN, dry contact, or other low-voltage communication signals.
+
+---
+
+### Common RJ45 Numbering
+
+When looking at an RJ45 plug with the clip facing away from you and the copper contacts facing up, pin 1 is usually on the left:
+
+```text
+Copper contacts facing up
+Clip facing away
+
+Pin:  1  2  3  4  5  6  7  8
+      |  |  |  |  |  |  |  |
+     [------------------------]
+```
+
+Another way to view it:
+
+```text
+RJ45 plug front view, contacts up:
+
+  1  2  3  4  5  6  7  8
+┌────────────────────────────┐
+│ ▓  ▓  ▓  ▓  ▓  ▓  ▓  ▓     │
+└────────────────────────────┘
+```
+
+Always confirm orientation before crimping or probing.
+
+---
+
+### Common PACE / Pylon-Style RS485 RJ45 Pinout
+
+A commonly used RS485 pinout on many PACE/Pylon-style lithium batteries is:
+
+| RJ45 Pin | Signal | Notes |
+|---|---|---|
+| Pin 1 | RS485-B / 485B / D- | Inverting RS485 line |
+| Pin 2 | RS485-A / 485A / D+ | Non-inverting RS485 line |
+| Pin 3 | NC / Reserved | May vary by battery |
+| Pin 4 | CAN-H | Used for CAN, not RS485 |
+| Pin 5 | CAN-L | Used for CAN, not RS485 |
+| Pin 6 | NC / Reserved | May vary by battery |
+| Pin 7 | GND / COM | Communication ground on some models |
+| Pin 8 | GND / COM | Communication ground on some models |
+
+> Warning: This is a common pattern, not a universal rule. Some batteries swap A/B, use different ground pins, or use separate RJ45 ports for inverter CAN and RS485 monitoring.
+
+---
+
+### RS485 Connection from RJ45 to RS485 Board
+
+If your battery uses the common pinout above, the connection to the RS485 board would normally be:
+
+| Battery RJ45 Pin | Battery Signal | RS485 Board |
+|---|---|---|
+| Pin 1 | RS485-B / D- | B / D- / 485- |
+| Pin 2 | RS485-A / D+ | A / D+ / 485+ |
+| Pin 7 or 8 | GND / COM | GND, if required |
+
+Example:
+
+```text
+Battery RJ45 Pin 2  RS485-A / D+  ───── RS485 board A / D+ / 485+
+Battery RJ45 Pin 1  RS485-B / D-  ───── RS485 board B / D- / 485-
+Battery RJ45 Pin 7  GND / COM     ───── RS485 board GND, if required
+```
+
+If there is no communication but everything else is correct, try swapping A and B:
+
+```text
+Battery A / D+  -> RS485 board B / D-
+Battery B / D-  -> RS485 board A / D+
+```
+
+Some manufacturers label A/B opposite to the RS485 board manufacturer.
+
+---
+
+### RJ45 Daisy-Chain Between Multiple Batteries
+
+When using multiple batteries, the RS485 bus should continue from one battery to the next.
+
+If the batteries have dual RJ45 link ports, the physical chain may look like this:
+
+```text
+ESP32 RS485 board
+   |
+   | RS485 A/B/GND
+   |
+RJ45 RS485 port on Pack 1 / Master
+   |
+   | Battery link cable
+   |
+RJ45 RS485 port on Pack 2 / Slave 1
+   |
+   | Battery link cable
+   |
+RJ45 RS485 port on Pack 3 / Slave 2
+   |
+   | Battery link cable
+   |
+RJ45 RS485 port on Pack 4 / Slave 3
+```
+
+Electrically, the RS485 bus is still:
+
+```text
+A / D+  ───── Pack 1 A ───── Pack 2 A ───── Pack 3 A ───── Pack 4 A
+B / D-  ───── Pack 1 B ───── Pack 2 B ───── Pack 3 B ───── Pack 4 B
+GND     ───── Pack 1 GND ─── Pack 2 GND ─── Pack 3 GND ─── Pack 4 GND
+```
+
+---
+
+### RJ45 Breakout Cable Example
+
+A practical way to connect an ESP32 RS485 board to the battery is to use a short RJ45 breakout cable.
+
+Example using the common PACE/Pylon-style RS485 pinout:
+
+```text
+RJ45 Pin 1  -> RS485 B / D-
+RJ45 Pin 2  -> RS485 A / D+
+RJ45 Pin 7  -> GND / COM, optional if required
+RJ45 Pin 8  -> GND / COM, optional if required
+```
+
+Then connect to the RS485 board:
+
+```text
+RJ45 Pin 1  -> RS485 board B / D-
+RJ45 Pin 2  -> RS485 board A / D+
+RJ45 Pin 7/8 -> RS485 board GND
+```
+
+Do not connect CAN-H or CAN-L to the RS485 board.
+
+```text
+RJ45 Pin 4 CAN-H  -> do not connect to RS485 board
+RJ45 Pin 5 CAN-L  -> do not connect to RS485 board
+```
+
+---
+
+### T568B Wire Colours
+
+If the RJ45 cable uses standard T568B wiring, the wire colours are usually:
+
+| RJ45 Pin | T568B Colour |
+|---|---|
+| Pin 1 | White/Orange |
+| Pin 2 | Orange |
+| Pin 3 | White/Green |
+| Pin 4 | Blue |
+| Pin 5 | White/Blue |
+| Pin 6 | Green |
+| Pin 7 | White/Brown |
+| Pin 8 | Brown |
+
+Using the common PACE/Pylon-style RS485 pinout:
+
+| Function | RJ45 Pin | T568B Colour |
+|---|---|---|
+| RS485-B / D- | Pin 1 | White/Orange |
+| RS485-A / D+ | Pin 2 | Orange |
+| GND / COM | Pin 7 or 8 | White/Brown or Brown |
+
+> Always test continuity with a multimeter. Do not rely only on cable colour, especially with pre-made or non-standard cables.
+
+---
+
+### CAN Port vs RS485 Port
+
+Many batteries have multiple RJ45 ports, for example:
+
+```text
+CAN / Inverter communication port
+RS485 / BMS monitoring port
+Link / battery-to-battery port
+```
+
+This ESPHome project uses RS485/Modbus.
+
+Do not connect the ESP32 RS485 board to the CAN pins or a CAN-only port.
+
+If the battery has a dedicated RS485 port, use that port.
+
+If the battery uses the same physical RJ45 connector for multiple communication types, confirm which pins are RS485 A/B before connecting.
+
+---
+
+### RJ45 Safety Checklist
+
+Before powering the ESP32/RS485 monitor:
+
+```text
+Confirm the battery RJ45 pinout from the manual
+Confirm whether the port is RS485, not CAN-only
+Confirm RJ45 pin 1 orientation
+Confirm A/B wiring with a continuity tester
+Confirm GND/COM is connected only if required
+Confirm no battery power pins are connected to the RS485 board
+Confirm only one ESP32/device is polling the RS485 bus
+```
+
+Incorrect RJ45 wiring can prevent communication and may damage hardware if voltage pins are connected incorrectly.
+
+
 ## Auto Cell-Count Detection
 
 The configuration reads up to 16 possible cell-voltage registers per pack.
@@ -518,6 +734,233 @@ sensor.pace_bms_multipack_combined_projected_charging_time
 ```
 
 ---
+
+---
+
+## Home Assistant `configuration.yaml` Templates
+
+Some users may want extra Home Assistant template sensors in `configuration.yaml` to create cleaner dashboard entities, combine values, or enforce stricter availability rules.
+
+The same principle used in the ESPHome YAML should also be followed in Home Assistant:
+
+```text
+Valid source data = show calculated value
+Invalid / unavailable source data = calculated sensor becomes unavailable
+Do not silently replace unavailable values with 0
+```
+
+Avoid this pattern for important live values:
+
+```jinja
+{{ states('sensor.example') | float(0) }}
+```
+
+Using `float(0)` can hide failures because `unknown` or `unavailable` becomes `0`, and the dashboard may continue to show a calculated value that is not trustworthy.
+
+Prefer using an `availability:` template:
+
+```yaml
+availability: >
+  {{
+    states('sensor.example') | is_number
+  }}
+state: >
+  {{
+    states('sensor.example') | float
+  }}
+```
+
+This ensures the template sensor becomes unavailable when its source data is unavailable.
+
+---
+
+### Example: Safe Home Assistant Template Sensors
+
+The following example shows the recommended pattern for Home Assistant template sensors.
+
+```yaml
+template:
+  - sensor:
+      - name: "Sunsynk Total PV Power"
+        unique_id: sunsynk_total_pv_power
+        unit_of_measurement: "W"
+        device_class: power
+        state_class: measurement
+        availability: >
+          {{
+            states('sensor.sunsynk_inverter_pv1_power') | is_number and
+            states('sensor.sunsynk_inverter_pv2_power') | is_number
+          }}
+        state: >
+          {{
+            (
+              states('sensor.sunsynk_inverter_pv1_power') | float +
+              states('sensor.sunsynk_inverter_pv2_power') | float
+            ) | round(0)
+          }}
+
+      - name: "Sunsynk UPS Essential Final"
+        unique_id: sunsynk_ups_essential_final
+        unit_of_measurement: "W"
+        device_class: power
+        state_class: measurement
+        availability: >
+          {{
+            states('sensor.sunsynk_inverter_ups_essential_power') | is_number
+          }}
+        state: >
+          {{
+            states('sensor.sunsynk_inverter_ups_essential_power') | float | abs | round(0)
+          }}
+
+      - name: "Sunsynk Non Essential Final"
+        unique_id: sunsynk_non_essential_final
+        unit_of_measurement: "W"
+        device_class: power
+        state_class: measurement
+        availability: >
+          {{
+            states('sensor.sunsynk_inverter_load_power') | is_number and
+            states('sensor.sunsynk_inverter_ups_essential_power') | is_number
+          }}
+        state: >
+          {% set total = states('sensor.sunsynk_inverter_load_power') | float | abs %}
+          {% set essential = states('sensor.sunsynk_inverter_ups_essential_power') | float | abs %}
+          {{ [total - essential, 0] | max | round(0) }}
+
+      - name: "Sunsynk Home Power Final"
+        unique_id: sunsynk_home_power_final
+        unit_of_measurement: "W"
+        device_class: power
+        state_class: measurement
+        availability: >
+          {{
+            states('sensor.sunsynk_inverter_load_power') | is_number
+          }}
+        state: >
+          {{
+            states('sensor.sunsynk_inverter_load_power') | float | abs | round(0)
+          }}
+
+      - name: "Sunsynk Overall State Text"
+        unique_id: sunsynk_overall_state_text
+        availability: >
+          {{
+            states('sensor.sunsynk_inverter_overall_state') not in
+            ['unknown', 'unavailable', 'none', '']
+          }}
+        state: >
+          {% set raw = states('sensor.sunsynk_inverter_overall_state') %}
+          {% set code = raw | int(base=16, default=-1) %}
+          {{ {
+            0: 'Standby',
+            1: 'Self-test',
+            2: 'Normal',
+            3: 'Alarm',
+            4: 'Fault'
+          }.get(code, 'Unknown (' ~ code ~ ')') }}
+
+  - binary_sensor:
+      - name: "Sunsynk Inverter Grid Connected"
+        unique_id: sunsynk_inverter_grid_connected
+        device_class: connectivity
+        delay_off:
+          seconds: 30
+        availability: >
+          {{
+            states('sensor.sunsynk_inverter_grid_voltage') | is_number
+          }}
+        state: >
+          {{
+            states('sensor.sunsynk_inverter_grid_voltage') | float > 100
+          }}
+```
+
+---
+
+### Why `availability:` Matters
+
+For live operational dashboards, it is safer to show `unavailable` than to show an incorrect calculated value.
+
+Example problem:
+
+```yaml
+state: >
+  {{
+    states('sensor.source_sensor') | float(0)
+  }}
+```
+
+If `sensor.source_sensor` fails, the template will use `0`.
+
+This can make the dashboard look like the device is reporting a real zero value, when the real issue is that data is missing.
+
+Recommended approach:
+
+```yaml
+availability: >
+  {{
+    states('sensor.source_sensor') | is_number
+  }}
+state: >
+  {{
+    states('sensor.source_sensor') | float
+  }}
+```
+
+This way:
+
+```text
+Source sensor valid = calculated sensor shows value
+Source sensor unavailable = calculated sensor unavailable
+```
+
+---
+
+### Restart / Reload After Editing Templates
+
+After editing `configuration.yaml`, either:
+
+```text
+Developer Tools > YAML > Check Configuration
+Developer Tools > YAML > Reload Template Entities
+```
+
+or restart Home Assistant if required.
+
+Always check the new entities under:
+
+```text
+Developer Tools > States
+```
+
+Search for the entity name or unique ID and confirm:
+
+```text
+The state is correct
+The unit of measurement is correct
+The sensor becomes unavailable when its source is unavailable
+```
+
+---
+
+### Template Sensor Design Rule
+
+For this project, use this rule consistently:
+
+```text
+Never hide unavailable data by converting it to 0.
+Only calculate when all required source sensors are valid.
+Let failures become visible on the dashboard.
+```
+
+This matches the ESPHome timeout philosophy used in the PACE BMS multipack monitor:
+
+```text
+Fresh valid data = show value
+Invalid data = reject value
+No fresh data within timeout = unavailable
+```
 
 ## Troubleshooting
 
