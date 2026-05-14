@@ -29,22 +29,6 @@ It supports per-pack monitoring, automatic valid cell-count detection, combined 
 
 ---
 
-## Repository Name
-
-Suggested repository name:
-
-```text
-esphome-pace-bms-multipack
-```
-
-Suggested GitHub description:
-
-```text
-ESPHome monitor for multi-pack PACE RS485/Modbus lithium batteries with auto cell-count detection and Home Assistant/MQTT integration.
-```
-
----
-
 ## Main YAML File
 
 Recommended YAML file name:
